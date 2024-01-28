@@ -1,0 +1,28 @@
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v3
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: helloworld.tex
+      - uses: actions/upload-artifact@v3
+        with:
+         name: PDF
+         path: helloworld.pdf
+      - name: Create Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: latest
+          files: |
+            helloworld.pdf
